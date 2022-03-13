@@ -1,4 +1,4 @@
-module golibrary
+module github.com/Kai5174/golibrary
 
 go 1.17
 
