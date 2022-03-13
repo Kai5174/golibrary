@@ -12,3 +12,13 @@ func RemoveDuplicateStr(strSlice []string) []string {
 	}
 	return list
 }
+
+// StrSliceContains 判断[]string里面是否包含了某个string
+func StrSliceContains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
