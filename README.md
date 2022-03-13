@@ -5,7 +5,7 @@
 ```go
 import "github.com/Kai5174/golibrary"
 
-func() main {
+func main() {
     content, err := golibrary.ReadFile("hello.txt")
     if err != nil {
         log.Panicln(err.Error())
