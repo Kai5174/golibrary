@@ -1,6 +1,7 @@
 package golibrary
 
 import (
+	"bufio"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
@@ -59,4 +60,27 @@ func WalkDir(folderPath string) ([]string, error) {
 		return nil
 	})
 	return files, err
+}
+
+// ReadFileLines 读取文件,每行分割
+func ReadFileLines(filePath string) ([]string, error) {
+	file, err := os.Open("test.txt")
+
+	if err != nil {
+		return nil, err
+	}
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	var lines []string
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	err = file.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return lines, nil
 }
