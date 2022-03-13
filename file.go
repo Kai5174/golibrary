@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // ReadFile 读取文件内容,返回bytes
@@ -38,7 +39,7 @@ func ReadFileString(filePath string) (string, error) {
 }
 
 // ParseYamlToStruct 将yaml文件解析成结构体
-func ParseYamlToStruct(yamlPath string, s *struct{}) error {
+func ParseYamlToStruct(yamlPath string, s interface{}) error {
 	data, err := ReadFile(yamlPath)
 	if err != nil {
 		return err
@@ -55,16 +56,16 @@ func WalkDir(folderPath string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
-			files = append(files, path)
+			files = append(files, strings.ReplaceAll(path, "\\", "/"))
 		}
 		return nil
 	})
 	return files, err
 }
 
-// ReadFileLines 读取文件,每行分割
+// ReadFileLines 读取文件,每行分割, https://www.golangprograms.com/golang-read-file-line-by-line-to-string.html
 func ReadFileLines(filePath string) ([]string, error) {
-	file, err := os.Open("test.txt")
+	file, err := os.Open(filePath)
 
 	if err != nil {
 		return nil, err
