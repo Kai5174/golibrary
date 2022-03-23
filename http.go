@@ -3,7 +3,9 @@ package golibrary
 import (
 	"bytes"
 	"crypto/md5"
+	"encoding/base64"
 	"fmt"
+	"github.com/spaolacci/murmur3"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -62,4 +64,35 @@ func GetBodyMd5(r *http.Response) (string, error) {
 	}
 	digest := fmt.Sprintf("%x", md5.Sum(bodyBytes))
 	return digest, nil
+}
+
+// GetFaviconHash 计算目标的favicon hash, 返回int32
+func GetFaviconHash(r *http.Response) (int32, error) {
+	bodyBytes, err := GetBodyBytes(r)
+	if err != nil {
+		return 0, err
+	}
+	return calcFaviconHash(bodyBytes), nil
+}
+
+func calcFaviconHash(data []byte) int32 {
+	stdBase64 := base64.StdEncoding.EncodeToString(data)
+	stdBase64 = insertInto(stdBase64, 76, '\n')
+	hasher := murmur3.New32WithSeed(0)
+	hasher.Write([]byte(stdBase64))
+	return int32(hasher.Sum32())
+}
+
+func insertInto(s string, interval int, sep rune) string {
+	var buffer bytes.Buffer
+	before := interval - 1
+	last := len(s) - 1
+	for i, char := range s {
+		buffer.WriteRune(char)
+		if i%interval == before && i != last {
+			buffer.WriteRune(sep)
+		}
+	}
+	buffer.WriteRune(sep)
+	return buffer.String()
 }
